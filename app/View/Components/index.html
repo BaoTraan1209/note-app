@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -31,8 +32,17 @@
         <div class="sidebar col-2 p-3">
             <h5>Notes</h5>
 
-            <div class="nav-item" onclick="filterByLabel(null)">📒 All Notes</div>
-            <div class="nav-item" onclick="showPinned()">📌 Pinned</div>
+            <div class="nav-item">
+                <i data-lucide="notebook"></i> All Notes
+            </div>
+
+            <div class="nav-item">
+                <i data-lucide="pin"></i> Pinned
+            </div>
+
+            <div class="nav-item">
+                <i data-lucide="share-2"></i> Shared
+            </div>
 
             <hr>
 
