@@ -1,27 +1,53 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
-
-    <form method="POST" action="{{ route('password.confirm') }}">
-        @csrf
-
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirm password - NoteNest</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('css/auth/auth-simple.css') }}">
+</head>
+<body>
+<main class="auth-shell">
+    <section class="auth-card">
+        <div class="brand">
+            <span class="brand-mark"><i class="bi bi-shield-lock"></i></span>
+            <span>NoteNest</span>
         </div>
 
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+        <h1>Confirm password</h1>
+        <p class="subtitle">This is a secure area. Please re-enter your password to continue.</p>
+
+        @if ($errors->any())
+            <div class="alert-box">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('password.confirm') }}">
+            @csrf
+
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <i class="bi bi-lock"></i>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+                    <button class="password-toggle" type="button" aria-label="Show password" data-target="password">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <a href="{{ url()->previous() }}">Back</a>
+                <button class="auth-button" type="submit">Confirm</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script src="{{ asset('js/note-app/auth-simple.js') }}"></script>
+</body>
+</html>

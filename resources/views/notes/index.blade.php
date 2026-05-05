@@ -1,5 +1,5 @@
-@extends('layouts.app') // views/layouts/app.blade.php
-@section('content') // content -> đẩy vào @yeild('content')
+@extends('layouts.app')
+@section('content')
     <div class="card">
         <div class="card-body">
             <div class="position-relative">
@@ -13,28 +13,33 @@
                     </div>
                 </div>
             </div>
-{{--            <div class="row">--}}
-{{--                <div class="table-responsive">--}}
-{{--                    <table class="table">--}}
-{{--                        <thead>--}}
-{{--                        <tr>--}}
-{{--                            <th>#</th>--}}
-{{--                            <th>Title</th>--}}
-{{--                            <th>Content</th>--}}
-{{--                        </tr>--}}
-{{--                        </thead>--}}
-{{--                        <tbody>--}}
-{{--                        @foreach($notes as $key => $note)--}}
-{{--                            <tr>--}}
-{{--                                <td>{{ $notes->firstItem() + $key }}</td>--}}
-{{--                                <td>{{ $note['title'] }}</td>--}}
-{{--                                <td>{{ $note['note'] }}</td>--}}
-{{--                        @endforeach--}}
-{{--                        </tbody>--}}
-{{--                    </table>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--            <x-pagination :data="$notes"/>--}}
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Content</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($notes as $key => $note)
+                            <tr>
+                                {{-- Tu dong tang tu 1 -> n --}}
+{{--                                <td>{{ $loop->iteration }}</td>--}}
+
+                                <td>{{ $notes->firstItem() + $key }}</td>
+                                <td>{{$note['id']}}</td>
+                                <td>{{ $note['title'] }}</td>
+                                <td>{{ $note['note'] }}</td>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <x-pagination :data="$notes"/>
         </div>
     </div>
 @endsection

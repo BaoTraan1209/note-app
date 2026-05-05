@@ -11,24 +11,34 @@ use Illuminate\View\View;
 
 class NoteController extends Controller
 {
-    public function index(Request $request): View
-    {
-        return view('notes.index');
-    }
-
     public function createView(Request $request):View
     {
         return view('notes.create');
     }
 
-    public function store(Request $request): View
+    public function index(Request $request):View
+    {
+        $notes = app(NoteService::class)->getAll();
+        $data = [];
+        $data['notes'] = $notes;
+        return view('notes.index', $data);
+    }
+
+    public function show(Request $request): View
+    {
+        $noteId = $request->route('noteId');
+        $note = app(NoteService::class)->findById($noteId);
+
+        $data = [];
+        $data['note'] = $note;
+        return view('notes.show', $data);
+    }
+
+    public function store(Request $request):View
     {
         $title = $request->get('title');
         $content = $request->get('content');
-
-        // Controller -> Service xu ly logic
         $service = app(NoteService::class);
-
         $data = [];
         return view('notes.index', $data);
     }
