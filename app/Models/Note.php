@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
  * @property string $title
  * @property string|null $content
  * @property string|null $password
- * @property int created_by // created by user
+ * @property int $created_by // created by user
  */
 class Note extends Model
 {
@@ -33,7 +34,7 @@ class Note extends Model
         ];
     }
 
-    public static function make(string $title, ?string $content = null, ?string $password = null, int $userId): static
+    public static function make(int $userId, string $title, ?string $content = null, ?string $password = null): static
     {
         return new static ([
             'title' => $title,
@@ -47,5 +48,10 @@ class Note extends Model
     public function createdByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class)->withTimestamps();
     }
 }

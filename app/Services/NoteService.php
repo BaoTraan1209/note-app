@@ -11,15 +11,15 @@ class NoteService
 
     }
 
-    public function createNote(string $title, int $userId, ?string $content, ?string $password): Note
+    public function createNote(int $userId, string $title, ?string $content, ?string $password): Note
     {
         $note = Note::make(
-            title:$title,
             userId:$userId,
+            title:$title,
             content:$content,
             password:$password,
         );
-        $this->noteRepository->save($note);
+        $this->NoteRepository()->save($note);
         return $note;
 
     }
