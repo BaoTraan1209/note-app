@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|null $content
  * @property string|null $password
  * @property int $created_by // created by user
+ * @property bool $pinned
+ * @property string|null $color
+ * @property \Illuminate\Support\Carbon|null $pinned_at
  */
 class Note extends Model
 {
@@ -24,13 +27,18 @@ class Note extends Model
         'title',
         'content',
         'password',
-        'created_by'
+        'created_by',
+        'pinned',
+        'pinned_at',
+        'color'
     ];
 
     protected function casts(): array
     {
         return [
             'password' => 'hashed',
+            'pinned' => 'boolean',
+            'pinned_at' => 'datetime',
         ];
     }
 
@@ -54,4 +62,5 @@ class Note extends Model
     {
         return $this->belongsToMany(Label::class)->withTimestamps();
     }
+
 }
