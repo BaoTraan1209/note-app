@@ -17,11 +17,8 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
             $table->string('name');
-            $table->string('slug');
             $table->string('color')->nullable();
             $table->timestamps();
-
-            $table->unique(['user_id', 'slug']);
         });
     }
 

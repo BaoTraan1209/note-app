@@ -9,41 +9,37 @@ use Illuminate\Support\Str;
 
 /**
  * @property int $id
- * @property int $user_id
  * @property string $name
- * @property string $slug
  * @property string|null $color
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property-read \App\Models\User $user
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Note[] $notes
  */
 class Label extends Model
 {
+    protected $table = 'labels';
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = true;
     protected $fillable = [
-        'user_id',
         'name',
-        'slug',
-        'color'
+        'color',
+        'created_by',
     ];
 
-    public static function createLabel(int $user_id, string $name, string $slug, ?string $color = null): static
+    public static function createLabel(int $userId, string $name, ?string $color = null): static
     {
         return new static ([
-            'user_id' => $user_id,
             'name' => $name,
-            'slug' => Str::slug($name),
             'color' => $color,
+            'created_by' => $userId
         ]);
     }
 
-    public function user(): BelongsTo
+    public function createdByUser(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by', 'user_id');
     }
 
     public function notes(): BelongsToMany
     {
-        return $this->belongsToMany(Note::class)->withTimestamps();
+        return $this->belongsToMany(Note::class, 'label_notes', 'label_id', 'note_id');
     }
 }

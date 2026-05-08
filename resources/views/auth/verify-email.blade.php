@@ -1,47 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Verify Email - NoteNest</title>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('css/auth/auth-simple.css') }}">
-</head>
-<body>
-<main class="auth-shell">
-    <section class="auth-card">
-        <div class="brand">
-            <span class="brand-mark"><i class="bi bi-envelope-check"></i></span>
-            <span>NoteNest</span>
-        </div>
+@extends('layouts.guest')
 
-        <h1>Verify Email</h1>
-        <p class="subtitle">Thank you for registering. Please check your email and click the activation link to activate your account.</p>
+@section('title', 'Verify Email - NoteNest')
 
-        @if (session('status') == 'verification-link-sent')
-            <div class="status-box">
-                <i class="bi bi-check-circle"></i>
-                <span>The verification link has been sent to your email.</span>
-            </div>
-        @endif
-
-        <div class="verify-actions">
-            <form method="POST" action="{{ route('verification.send') }}">
+@section('content')
+    <main class="guest-shell" style="grid-template-columns: 1fr;">
+        <section class="auth-card compact">
+            <div class="auth-head"><div class="brand"><span class="brand-mark"><i class="bi bi-envelope-check"></i></span><span>NoteNest</span></div></div>
+            <div class="title-block"><h2>Verify your email</h2><p class="muted">Please check your inbox and click the activation link to verify your account.</p></div>
+            @if (session('status') == 'verification-link-sent')<div class="alert alert-success"><i class="bi bi-check-circle"></i><span>A new verification link has been sent.</span></div>@endif
+            <form class="auth-form" method="POST" action="{{ route('verification.send') }}" data-loading-form>
                 @csrf
-                <button class="auth-button" type="submit">Resend Verification Email</button>
+                <button class="btn-primary" type="submit">Resend verification email</button>
             </form>
-
-            <form class="logout-form" method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="link-button" type="submit">Logout</button>
-            </form>
-        </div>
-
-        <p class="footer-link">You can still use the features while your account is not verified, but notifications will continue to appear on the website.</p>
-    </section>
-</main>
-
-<script src="{{ asset('js/note-app/auth-simple.js') }}"></script>
-</body>
-</html>
+            @if (Route::has('logout'))
+                <form class="auth-form" method="POST" action="{{ route('logout') }}" style="margin-top: 12px;">
+                    @csrf
+                    <button class="btn-secondary" type="submit">Log out</button>
+                </form>
+            @endif
+        </section>
+    </main>
+@endsection

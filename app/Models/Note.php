@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int $created_by // created by user
  * @property bool $pinned
  * @property string|null $color
- * @property \Illuminate\Support\Carbon|null $pinned_at
  */
 class Note extends Model
 {
@@ -29,7 +28,6 @@ class Note extends Model
         'password',
         'created_by',
         'pinned',
-        'pinned_at',
         'color'
     ];
 
@@ -38,7 +36,6 @@ class Note extends Model
         return [
             'password' => 'hashed',
             'pinned' => 'boolean',
-            'pinned_at' => 'datetime',
         ];
     }
 
@@ -60,7 +57,7 @@ class Note extends Model
 
     public function labels(): BelongsToMany
     {
-        return $this->belongsToMany(Label::class)->withTimestamps();
+        return $this->belongsToMany(Label::class, 'label_notes', 'note_id', 'label_id');
     }
 
 }
