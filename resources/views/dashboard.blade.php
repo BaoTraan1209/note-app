@@ -12,7 +12,7 @@
         </div>
         <div class="stats">
             <div class="stat"><strong>{{ $stats['total'] ?? 0 }}</strong><span>Notes</span></div>
-            <div class="stat"><strong>{{ $stats['shared'] ?? 0 }}</strong><span>Shared</span></div>
+{{--            <div class="stat"><strong>{{ $stats['shared'] ?? 0 }}</strong><span>Shared</span></div>--}}
             <div class="stat"><strong>{{ $stats['pinned'] ?? 0 }}</strong><span>Pinned</span></div>
             <div class="stat"><strong>{{ $stats['locked'] ?? 0 }}</strong><span>Locked</span></div>
         </div>

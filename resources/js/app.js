@@ -1,5 +1,3 @@
-import './bootstrap';
-
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
@@ -24,6 +22,14 @@ document.querySelectorAll("[data-loading-form]").forEach((form) => {
         if (!button) return;
         button.style.opacity = "0.82";
         button.style.pointerEvents = "none";
+    });
+});
+
+document.querySelectorAll("[data-confirm]").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+        if (!window.confirm(form.dataset.confirm || "Are you sure?")) {
+            event.preventDefault();
+        }
     });
 });
 
@@ -112,3 +118,45 @@ document.querySelectorAll("[data-view]").forEach((button) => {
         notesGrid?.classList.toggle("list-view", button.dataset.view === "list");
     });
 });
+
+const noteEditor = document.querySelector("[data-note-editor]");
+const autosaveUrl = noteEditor?.dataset.autosaveUrl;
+const saveState = document.querySelector("[data-save-state] span");
+let autosaveTimer;
+
+function updateSaveState(message) {
+    if (saveState) saveState.textContent = message;
+}
+
+document.querySelectorAll("[data-autosave-field]").forEach((field) => {
+    field.addEventListener("input", () => {
+        if (!autosaveUrl) return;
+        window.clearTimeout(autosaveTimer);
+        updateSaveState("Typing...");
+        autosaveTimer = window.setTimeout(async () => {
+            const token = document.querySelector("meta[name='csrf-token']")?.content;
+            const formData = new FormData(noteEditor);
+            try {
+                const response = await fetch(autosaveUrl, {
+                    method: "PATCH",
+                    headers: {
+                        "X-CSRF-TOKEN": token,
+                        "Accept": "application/json",
+                    },
+                    body: formData,
+                });
+                if (!response.ok) throw new Error("Autosave failed");
+                const data = await response.json();
+                updateSaveState(`Auto-saved at ${data.saved_at}`);
+            } catch (error) {
+                updateSaveState("Auto-save failed. Use Save now.");
+            }
+        }, 300);
+    });
+});
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+    });
+}

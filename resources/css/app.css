@@ -33,6 +33,27 @@ body {
         var(--bg);
 }
 
+body.dark-theme {
+    --bg: #101820;
+    --paper: #17212b;
+    --paper-soft: rgba(23, 33, 43, 0.86);
+    --ink: #eef4f6;
+    --muted: #b2c0cc;
+    --line: #304251;
+    background: #101820;
+}
+
+body.dark-theme .sidebar,
+body.dark-theme .topbar,
+body.dark-theme .mobile-nav,
+body.dark-theme .editor-panel,
+body.dark-theme .settings-panel,
+body.dark-theme .show-panel,
+body.dark-theme .panel,
+body.dark-theme .note-card {
+    background: var(--paper-soft);
+}
+
 button,
 input,
 select,
@@ -520,6 +541,13 @@ p {
     background: #dff1f3;
     color: var(--brand-dark);
     font-weight: 900;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .avatar.small {
@@ -870,6 +898,26 @@ p {
     margin: 0;
 }
 
+.compact-input,
+.file-input {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.82);
+    color: var(--ink);
+    padding: 8px 10px;
+}
+
+.link-button {
+    border: 0;
+    background: transparent;
+    color: var(--brand-dark);
+    font-weight: 900;
+    cursor: pointer;
+    padding: 0;
+}
+
 .empty-state {
     border: 1px dashed var(--line);
     border-radius: 22px;
@@ -1066,6 +1114,46 @@ p {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.note-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.note-images img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+.share-row,
+.label-management-row,
+.label-edit-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.share-row,
+.label-management-row {
+    justify-content: space-between;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px;
+    background: rgba(255,255,255,0.48);
+}
+
+.label-edit-form {
+    flex: 1;
+}
+
+.color-input {
+    width: 54px;
+    padding: 4px;
 }
 
 .is-hidden {

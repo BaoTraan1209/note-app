@@ -3,7 +3,7 @@
     $labels = isset($labels) ? collect($labels) : collect();
     $stats = $stats ?? [
         'total' => $notes->count(),
-        'shared' => $notes->where('is_shared', true)->count(),
+//        'shared' => $notes->where('is_shared', true)->count(),
         'pinned' => $notes->where('is_pinned', true)->count(),
         'locked' => $notes->where('is_locked', true)->count(),
     ];
@@ -24,7 +24,7 @@
         </div>
         <div class="stats">
             <div class="stat"><strong>{{ $stats['total'] }}</strong><span>Notes</span></div>
-            <div class="stat"><strong>{{ $stats['shared'] }}</strong><span>Shared</span></div>
+{{--            <div class="stat"><strong>{{ $stats['shared'] }}</strong><span>Shared</span></div>--}}
             <div class="stat"><strong>{{ $stats['pinned'] }}</strong><span>Pinned</span></div>
             <div class="stat"><strong>{{ $stats['locked'] }}</strong><span>Locked</span></div>
         </div>
@@ -34,7 +34,7 @@
         <div class="quick-filters" aria-label="Note status filters">
             <button class="status-filter active" type="button" data-status-filter="all"><i class="bi bi-grid"></i> All</button>
             <button class="status-filter" type="button" data-status-filter="pinned"><i class="bi bi-pin-angle"></i> Pinned</button>
-            <button class="status-filter" type="button" data-status-filter="shared"><i class="bi bi-people"></i> Shared</button>
+{{--            <button class="status-filter" type="button" data-status-filter="shared"><i class="bi bi-people"></i> Shared</button>--}}
             <button class="status-filter" type="button" data-status-filter="locked"><i class="bi bi-lock"></i> Locked</button>
         </div>
         <a class="btn-primary" href="{{ $createUrl }}"><i class="bi bi-plus-lg"></i> New note</a>
@@ -69,7 +69,7 @@
                 $labelIds = $noteLabels->pluck('id')->implode(' ');
                 $statuses = collect([
                     $note->is_pinned ? 'pinned' : null,
-                    $note->is_shared ? 'shared' : null,
+//                    $note->is_shared ? 'shared' : null,
                     $note->is_locked ? 'locked' : null,
                 ])->filter()->implode(' ');
                 $editUrl = Route::has('notes.edit') ? route('notes.edit', $note->id) : '#';
@@ -82,13 +82,13 @@
                     <div class="note-icons">
                         @if ($note->is_pinned)<i class="bi bi-pin-angle-fill" title="Pinned"></i>@endif
                         @if ($note->is_locked)<i class="bi bi-lock-fill" title="Locked"></i>@endif
-                        @if ($note->is_shared)<i class="bi bi-people-fill" title="Shared"></i>@endif
+{{--                        @if ($note->is_shared)<i class="bi bi-people-fill" title="Shared"></i>@endif--}}
                     </div>
                 </div>
 
                 <div class="chips">
                     @if ($note->is_pinned)<span class="chip"><i class="bi bi-pin-angle-fill"></i> Pinned</span>@endif
-                    @if ($note->is_shared)<span class="chip"><i class="bi bi-people-fill"></i> Shared</span>@endif
+{{--                    @if ($note->is_shared)<span class="chip"><i class="bi bi-people-fill"></i> Shared</span>@endif--}}
                     @if ($note->is_locked)<span class="chip"><i class="bi bi-lock-fill"></i> Locked</span>@endif
                     @forelse ($noteLabels as $label)
                         <span class="chip">{{ $label->name }}</span>

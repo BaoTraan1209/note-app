@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int $id
+ * @property int $noteId
  * @property string $title
  * @property string|null $content
  * @property string|null $password
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Note extends Model
 {
     protected $table = 'notes';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'noteId';
     protected $keyType = 'int';
     public $incrementing = true;
 
@@ -52,12 +53,15 @@ class Note extends Model
     // mối quan hệ
     public function createdByUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by', 'id');
+        return $this->belongsTo(User::class, 'created_by', 'userId');
     }
 
     public function labels(): BelongsToMany
     {
-        return $this->belongsToMany(Label::class, 'label_notes', 'note_id', 'label_id');
+        return $this->belongsToMany(Label::class, 'label_notes', 'noteId', 'labelId');
     }
-
+    public function share(): HasMany
+    {
+        return $this->hasMany(NoteShare::class, 'noteShareId', 'noteId');
+    }
 }
