@@ -1,39 +1,21 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+@extends('layouts.guest')
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+@section('title', 'Reset Password - NoteNest')
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+@section('content')
+    <main class="guest-shell" style="grid-template-columns: 1fr;">
+        <section class="auth-card compact">
+            <div class="auth-head"><div class="brand"><span class="brand-mark"><i class="bi bi-key"></i></span><span>NoteNest</span></div></div>
+            <div class="title-block"><h2>Reset password</h2><p class="muted">Create a new password for your account.</p></div>
+            @if ($errors->any())<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i><span>{{ $errors->first() }}</span></div>@endif
+            <form class="auth-form" method="POST" action="{{ route('password.store') }}" data-loading-form>
+                @csrf
+                <input type="hidden" name="token" value="{{ $request->route('token') }}">
+                <div class="field"><label for="email">Email</label><div class="input-wrap"><i class="bi bi-envelope"></i><input id="email" name="email" type="email" value="{{ old('email', $request->email) }}" required autofocus></div></div>
+                <div class="field"><label for="password">New password</label><div class="input-wrap"><i class="bi bi-lock"></i><input id="password" name="password" type="password" required><button class="password-toggle" type="button" data-password-toggle data-target="password"><i class="bi bi-eye"></i></button></div></div>
+                <div class="field"><label for="password_confirmation">Confirm password</label><div class="input-wrap"><i class="bi bi-shield-lock"></i><input id="password_confirmation" name="password_confirmation" type="password" required><button class="password-toggle" type="button" data-password-toggle data-target="password_confirmation"><i class="bi bi-eye"></i></button></div></div>
+                <button class="btn-primary" type="submit">Update password</button>
+            </form>
+        </section>
+    </main>
+@endsection

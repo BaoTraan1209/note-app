@@ -19,6 +19,9 @@ return new class extends Migration
             $table->foreignId('created_by')
                 ->constrained('users') // tham chiếu bảng users
                 ->cascadeOnDelete();   // user bị xóa → note bị xóa theo
+            $table->string('color')->nullable();
+            $table->boolean('pinned')->default(false);
+            $table->timestamp('pinned_at')->nullable();
             $table->timestamps();
         });
     }

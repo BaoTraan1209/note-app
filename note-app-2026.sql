@@ -1,0 +1,1 @@
+CREATE DATABASE note_app_2026;

@@ -1,27 +1,18 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+@extends('layouts.guest')
 
-    <form method="POST" action="{{ route('password.confirm') }}">
-        @csrf
+@section('title', 'Confirm Password - NoteNest')
 
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+@section('content')
+    <main class="guest-shell" style="grid-template-columns: 1fr;">
+        <section class="auth-card compact">
+            <div class="auth-head"><div class="brand"><span class="brand-mark"><i class="bi bi-shield-lock"></i></span><span>NoteNest</span></div></div>
+            <div class="title-block"><h2>Confirm password</h2><p class="muted">This is a secure area. Please confirm your password to continue.</p></div>
+            @if ($errors->any())<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i><span>{{ $errors->first() }}</span></div>@endif
+            <form class="auth-form" method="POST" action="{{ route('password.confirm') }}" data-loading-form>
+                @csrf
+                <div class="field"><label for="password">Password</label><div class="input-wrap"><i class="bi bi-lock"></i><input id="password" name="password" type="password" required autofocus><button class="password-toggle" type="button" data-password-toggle data-target="password"><i class="bi bi-eye"></i></button></div></div>
+                <div class="form-row"><a href="{{ url()->previous() }}">Back</a><button class="btn-primary" type="submit">Confirm</button></div>
+            </form>
+        </section>
+    </main>
+@endsection

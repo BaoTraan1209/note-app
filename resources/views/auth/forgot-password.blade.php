@@ -1,25 +1,21 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+@extends('layouts.guest')
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@section('title', 'Forgot Password - NoteNest')
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+@section('content')
+    <main class="guest-shell" style="grid-template-columns: 1fr;">
+        <section class="auth-card compact">
+            <div class="auth-head">
+                <div class="brand"><span class="brand-mark"><i class="bi bi-envelope-paper"></i></span><span>NoteNest</span></div>
+            </div>
+            <div class="title-block"><h2>Forgot password?</h2><p class="muted">Enter your email and we will send you a password reset link.</p></div>
+            @if (session('status'))<div class="alert alert-success"><i class="bi bi-check-circle"></i><span>{{ session('status') }}</span></div>@endif
+            @if ($errors->any())<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i><span>{{ $errors->first() }}</span></div>@endif
+            <form class="auth-form" method="POST" action="{{ route('password.email') }}" data-loading-form>
+                @csrf
+                <div class="field"><label for="email">Email</label><div class="input-wrap"><i class="bi bi-envelope"></i><input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus></div></div>
+                <div class="form-row">@if (Route::has('login'))<a href="{{ route('login') }}">Back to login</a>@endif<button class="btn-primary" type="submit">Send reset link</button></div>
+            </form>
+        </section>
+    </main>
+@endsection
