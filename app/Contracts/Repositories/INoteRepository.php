@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 interface INoteRepository
 {
     public function findById(int $id): ?Note;
-    public function getAll(int $userId): Collection;
+    public function findUserNoteById(int $noteId, int $userId): ?Note;
+    public function getAll(): Collection;
+    public function delete(Note $note): bool;
     public function save(Note $note): Note;
-    public function search( int $userId, string $keyword): Collection;
-    public function filterByLabel(int $userId, int $labelId): Collection;
 }

@@ -13,11 +13,17 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/notes', [NoteController::class, 'index'])->name('notes'); // GET http://127.0.0.1:8000/notes
+    Route::get('/notes', [NoteController::class, 'index'])->name('notes.index');
 
-    Route::get('/notes/create', [NoteController::class, 'createView'])->name('notes.store-view'); // GET http://127.0.0.1:8000/notes/create
-    Route::post('/notes/create', [NoteController::class, 'store'])->name('notes.store'); // POST http://127.0.0.1:8000/notes/create
+    Route::get('/notes/create', [NoteController::class, 'create'])->name('notes.create');
+    Route::post('/notes/store', [NoteController::class, 'store'])->name('notes.store');
+
     Route::get('/notes/{noteId}', [NoteController::class, 'show'])->name('notes.show');
+
+//    Route::get('/notes/{noteId}/edit', [NoteController::class, 'edit'])->name('notes.edit');
+    Route::put('/notes/{noteId}', [NoteController::class, 'update'])->name('notes.update');
+
+    Route::delete('/notes/{noteId}', [NoteController::class, 'destroy'])->name('notes.destroy');
 
     Route::resource('labels', LabelController::class);
 

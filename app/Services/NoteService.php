@@ -4,81 +4,99 @@ namespace App\Services;
 
 use App\Contracts\Repositories\INoteRepository;
 use App\Models\Note;
+use App\Models\NoteTag;
 
 class NoteService
 {
     public function __construct(
-        protected INoteRepository $noteRepository)
-    {}
+        protected INoteRepository $noteRepository,
+    ) { }
 
-    public function createNote(int $userId, string $title, ?string $content, ?string $password, array $labelIds = []): Note
-    {
-        $note = Note::make(
-            userId:$userId,
-            title:$title,
-            content:$content,
-            password:$password,
-        );
-        $this->noteRepository->save($note);
-        $note->labels()->sync($labelIds);
-        return $note;
-    }
-
-    public function getAllNotes(int $userId)
-    {
-        return $this->noteRepository->getAll($userId);
-    }
-
-    public function findById(int $noteId): ?Note
-    {
-        return $this->noteRepository->findById($noteId);
-    }
-    public function update(
-        Note $note,
+    public function createNote(
         string $title,
-        ?string $content = null,
-        array $labelIds = []
+        int $userId,
+        ?string $content,
+        ?string $password,
+        ?array $tags,
     ): Note {
-        $note->update([
-            'title' => $title,
-            'content' => $content,]);
+        // 1. khoi tao doi tuong
+        $note = Note::make(
+            title: $title,
+            userId: $userId,
+            content: $content,
+            password: $password,
+        );
 
-        $note->labels()->sync($labelIds);
-        return $note;
-}
+        // 2. luu db
+        $this->noteRepository->save($note);
 
-    public function delete(Note $note): void
-    {
-        $note->delete();
-    }
-
-    public function pin(Note $note): Note
-    {
-        $note->update([
-            'pinned' => true,
-            'pinned_at' => now(),
-        ]);
+        $this->syncTags(
+            note: $note,
+            userId: $userId,
+            tags: $tags
+        );
 
         return $note;
     }
 
-    public function unpin(Note $note): Note
-    {
-        $note->update([
-            'pinned' => false,
-            'pinned_at' => null,
-        ]);
+    public function updateNote(
+        int $noteId,
+        string $title,
+        ?string $content,
+        ?string $password,
+        array $tags = []
+    ): Note {
+        $note = $this->noteRepository->findById($noteId);
+        $note->title = $title;
+        $note->content = $content;
+        $note->password = $password;
+
+        $this->noteRepository->save($note);
+
+        $this->syncTags(
+            note: $note,
+            userId: $note->created_by,
+            tags: $tags
+        );
 
         return $note;
     }
 
-    public function search(int $userId, string $keyword)
-    {
-        return $this->noteRepository->search($userId, $keyword);
+    public function deleteNote(
+        int $noteId,
+        int $userId
+    ): bool {
+        $note = $this->noteRepository
+            ->findUserNoteById(
+                noteId: $noteId,
+                userId: $userId
+            );
+
+        return $this->noteRepository->delete($note);
     }
 
-    public function filterByLabel(int $userId, int $labelId)
-    {
-        return $this->noteRepository->filterByLabel($userId, $labelId);
+    protected function syncTags(
+        Note $note,
+        int $userId,
+        array $tags = []
+    ): void {
+        $tagIds = [];
+        foreach ($tags as $tagName) {
+            $tagName = trim($tagName);
+
+            if ($tagName === '') {
+                continue;
+            }
+
+            $tag = NoteTag::query()
+                ->firstOrCreate([
+                    'name' => $tagName,
+                    'created_by' => $userId
+                ]);
+
+            $tagIds[] = $tag->getKey();
+        }
+
+        $note->tags()->sync($tagIds); // cập nhật bảng pivot
     }
 }

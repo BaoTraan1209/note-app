@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Note;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreNoteRequest extends FormRequest
+class UpdateNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,11 @@ class StoreNoteRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'content' => 'nullable|string'
+            'content' => 'nullable|string',
+            'password' => 'nullable|string',
+
+            'tags' => 'nullable|array',
+            'tags.*' => 'nullable|string',
         ];
     }
 }
