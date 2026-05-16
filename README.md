@@ -1,59 +1,326 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+NOTE APP 2026 - FINAL PROJECT README
+====================================
+524H0076 - Hoang Thai An
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+524H0036 - Le Ngoc Bao Tran
+1. PROJECT OVERVIEW
+-------------------
+Project name: NoteNest / Note App 2026
 
-## About Laravel
+This is a note management web application for the Web Programming & Applications final project.
+The application supports account management, note management, auto-save, tags, image attachments,
+password-protected notes, note sharing, realtime collaboration, and offline/PWA capability.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Technologies:
+- Backend: Laravel 12, PHP 8.2+
+- Frontend: Blade, CSS, JavaScript, Vite
+- Database: MySQL
+- Realtime: Laravel Broadcasting + Laravel Reverb WebSocket
+- Offline/PWA: Service Worker, Web App Manifest, IndexedDB
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. SYSTEM REQUIREMENTS
+----------------------
+- PHP 8.2 or newer
+- Composer
+- Node.js and npm
+- MySQL or MariaDB
+- Chrome, Edge, or Firefox
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+3. INSTALLATION
+---------------
+Open a terminal in the project root:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    G:\PHP\note-app-2026
 
-## Laravel Sponsors
+Install PHP dependencies:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    composer install
 
-### Premium Partners
+Install JavaScript dependencies:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+    npm install
 
-## Contributing
+Create .env file:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    copy .env.example .env
 
-## Code of Conduct
+Generate application key:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    php artisan key:generate
 
-## Security Vulnerabilities
+Configure database in .env:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=note_app_2026
+    DB_USERNAME=root
+    DB_PASSWORD=
 
-## License
+Create a MySQL database named:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    note_app_2026
+
+Run migrations:
+
+    php artisan migrate
+
+Optional seed account:
+
+    php artisan db:seed
+
+Create storage link for uploaded avatars and note images:
+
+    php artisan storage:link
+
+Build frontend assets:
+
+    npm run build
+
+
+4. RUNNING THE PROJECT
+----------------------
+Run Laravel server:
+
+    php artisan serve
+
+Default URL:
+
+    http://127.0.0.1:8000
+
+For development assets:
+
+    npm run dev
+
+For realtime collaboration, run Reverb in another terminal:
+
+    php artisan reverb:start
+
+
+5. REALTIME CONFIGURATION
+-------------------------
+Make sure .env contains:
+
+    BROADCAST_CONNECTION=reverb
+    REVERB_APP_ID=local-notenest
+    REVERB_APP_KEY=local-notenest-key
+    REVERB_APP_SECRET=local-notenest-secret
+    REVERB_HOST=localhost
+    REVERB_PORT=8080
+    REVERB_SCHEME=http
+
+    VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+    VITE_REVERB_HOST="${REVERB_HOST}"
+    VITE_REVERB_PORT="${REVERB_PORT}"
+    VITE_REVERB_SCHEME="${REVERB_SCHEME}"
+
+Note: Auto-save still works even if Reverb is not running. Reverb is required only for realtime
+collaboration between users.
+
+
+6. MAIL CONFIGURATION
+---------------------
+For local testing, mail can be logged instead of actually sent:
+
+    MAIL_MAILER=log
+
+Email features used by the application:
+- Account verification
+- Password reset
+- Share note notification
+
+To send real emails, configure SMTP in .env.
+
+
+7. SAMPLE AND EXISTING ACCOUNTS
+-------------------------------
+Seeder account:
+
+If you run:
+
+    php artisan db:seed
+
+the project creates:
+
+    Email: test@example.com
+    Password: password
+
+Existing accounts currently available in the provided local database:
+
+    1. Email: lengocbaotran2006123@gmail.com
+       Password: Tran@1209
+
+    2. Email: tranchaugaming0166@gmail.com
+       Password: 120906tran
+
+    3. Email: hoaiannguyen673@gmail.com
+       Account name: Bao Traan
+       Password: Tran@1209
+
+    4. Email: bechowdethuong1@gmail.com
+       Password: Tran@1209
+
+Important password note:
+The application stores passwords as bcrypt hashes, so the original plain-text passwords cannot be
+read from the database. Please use the passwords originally created for these accounts by the team.
+If a guaranteed test account is needed, run "php artisan db:seed" and use test@example.com/password.
+
+For testing share notes and realtime collaboration, use two different accounts in two browsers.
+
+
+8. IMPLEMENTED FEATURES
+-----------------------
+Account management:
+- User registration
+- User login and logout
+- Email verification notification
+- Password reset support
+- View and edit profile
+- Upload avatar
+- Change password
+- User preferences
+- Light/dark theme
+- Default grid/list view preference
+
+Simple note management:
+- Grid view and list view
+- Create notes
+- Update notes
+- Delete notes with confirmation dialog
+- Auto-save notes without Save button
+- Attach images to notes
+- Insert images at cursor position inside editor
+- Delete images and auto-save updated content
+- Pin notes to top
+- Live search by title and content
+- Tags/labels
+- Select previously used tags
+- Filter notes by tag
+
+Advanced note management:
+- Enable password protection on notes
+- Unlock notes with password
+- Change or remove note password
+- Share notes with registered users
+- Read-only and edit permissions
+- Share to multiple recipients
+- Share while creating a note
+- Shared notes section
+- Owner can update permission or revoke access
+- Realtime collaboration for editable shared notes
+- Icons for pinned, shared, and password-protected notes
+
+Other requirements:
+- Responsive UI
+- Light/dark theme
+- Custom dropdowns and polished UI components
+- PWA manifest
+- Service worker
+- Offline page
+- IndexedDB local draft/pending-save storage
+- Synchronize queued changes when online again
+
+
+9. DEMO GUIDE
+-------------
+Recommended checking flow:
+
+1. Register or log in.
+2. Open Profile and update avatar/display name.
+3. Open Preferences and switch light/dark theme.
+4. Open Notes.
+5. Create a new note.
+6. Type title/content and confirm auto-save status becomes "Saved".
+7. Add tags and select existing tags.
+8. Attach an image and confirm it appears at the cursor position.
+9. Delete the image and confirm it stays deleted after reload.
+10. Pin a note.
+11. Use live search and tag filter.
+12. Lock a note with password and unlock it.
+13. Share a note with another registered user.
+14. Log in as recipient and check Shared page.
+15. Give edit permission and test realtime collaboration in two browsers.
+16. Turn browser network offline, edit a note, then turn online and confirm sync.
+
+
+10. IMPORTANT FILES
+-------------------
+Routes:
+routes/web.php
+routes/auth.php
+routes/channels.php
+
+Controllers:
+app/Http/Controllers/NoteController.php
+app/Http/Controllers/NotePasswordController.php
+app/Http/Controllers/ProfileController.php
+app/Http/Controllers/PreferenceController.php
+
+Services:
+app/Services/NoteService.php
+
+Models:
+app/Models/Note.php
+app/Models/NoteTag.php
+app/Models/User.php
+
+Realtime:
+app/Events/NoteUpdated.php
+config/broadcasting.php
+config/reverb.php
+
+Frontend:
+resources/views
+resources/js/app.js
+resources/css/app.css
+
+PWA/offline:
+public/manifest.json
+public/sw.js
+resources/views/offline.blade.php
+
+
+11. TROUBLESHOOTING
+-------------------
+Vite manifest error:
+
+    npm run build
+    php artisan view:clear
+    php artisan config:clear
+
+Uploaded images or avatars do not show:
+
+    php artisan storage:link
+
+Realtime collaboration does not work:
+
+    php artisan reverb:start
+
+Database tables are missing:
+
+    php artisan migrate
+
+Sample account does not exist:
+
+    php artisan db:seed
+
+
+12. SUBMISSION NOTES
+--------------------
+Required submission should include:
+- Source code folder
+- Database file or migration instructions
+- Rubrik.docx
+- Demo video or YouTube demo link
+- Readme.txt
+
+Recommended final folder name:
+
+    id1_fullname1_id2_fullname2
+
+Recommended zip name:
+
+    id1_fullname1_id2_fullname2.zip
+
