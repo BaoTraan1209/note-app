@@ -1,0 +1,17 @@
+{
+    "name": "NoteNest",
+    "short_name": "NoteNest",
+    "description": "Offline-capable collaborative notes",
+    "start_url": "/notes",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#f5f7f4",
+    "theme_color": "#2f7f7a",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ]
+}

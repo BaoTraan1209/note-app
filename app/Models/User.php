@@ -23,6 +23,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'display_name',
+        'avatar',
+        'preferences',
     ];
 
     /**
@@ -45,7 +48,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'preferences' => 'array',
         ];
+    }
+
+    public function initials(): string
+    {
+        $name = $this->display_name ?: $this->name ?: $this->email;
+
+        return strtoupper(substr($name, 0, 2));
+    }
+
+    public function preference(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->preferences ?? [], $key, $default);
     }
 
     public static function make(string $name, string $email, string $password): static

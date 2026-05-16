@@ -8,7 +8,8 @@ class NoteQuery
     public function __construct(
         public int $page,
         public int $perPage,
-        public int $userId
+        public int $userId,
+        public ?string $keyword = null
     ) {
 
     }

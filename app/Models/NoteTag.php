@@ -17,22 +17,15 @@ use Illuminate\Support\Carbon;
 class NoteTag extends Model
 {
     protected $table = 'note_tags';
-
     protected $primaryKey = 'id';
-
     protected $keyType = 'int';
-
     public $incrementing = true;
-
     protected $fillable = [
         'name',
         'created_by'
     ];
 
-    public static function make(
-        string $name,
-        int $userId
-    ): static {
+    public static function make(string $name, int $userId): static {
         return new static([
             'name' => $name,
             'created_by' => $userId

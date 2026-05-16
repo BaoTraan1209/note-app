@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+
 /**
  * @property int $id
  * @property string $title
@@ -32,10 +33,12 @@ class Note extends Model
     protected $fillable = [
         'title',
         'content',
+        'images',
         'password',
         'pinned_at',
+        'font_size',
         'created_by'
-    ];
+        ];
 
     protected $hidden = [
         'password'
@@ -45,16 +48,13 @@ class Note extends Model
     {
         return [
             'password' => 'hashed',
+            'images' => 'array',
             'pinned_at' => 'datetime',
+            'font_size' => 'integer',
         ];
     }
 
-    public static function make(
-        string $title,
-        int $userId,
-        ?string $content = null,
-        ?string $password = null
-    ): static {
+    public static function make(string $title, int $userId, ?string $content = null, ?string $password = null): static {
         return new static ([
             'title' => $title,
             'content' => $content,
@@ -79,4 +79,27 @@ class Note extends Model
             'note_tag_id'
         );
     }
+
+    public function shareUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'note_shares',
+            'note_id',
+            'recipient_id'
+        )->withPivot([
+            'id',
+            'owner_id',
+            'permission',
+            'last_viewed_at',
+            'created_at',
+            'updated_at',
+        ])->withTimestamps();
+    }
+
+    public function isLocked(): bool
+    {
+        return filled($this->password);
+    }
 }
+

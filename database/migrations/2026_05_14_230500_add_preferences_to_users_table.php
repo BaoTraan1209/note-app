@@ -6,25 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('display_name')->nullable();
-            $table->string('avatar')->nullable();
-            $table->json('preferences')->nullable();
+            if (! Schema::hasColumn('users', 'preferences')) {
+                $table->json('preferences')->nullable()->after('avatar');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['display_name', 'avatar', 'preferences']);
+            if (Schema::hasColumn('users', 'preferences')) {
+                $table->dropColumn('preferences');
+            }
         });
     }
 };

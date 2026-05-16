@@ -1,7 +1,8 @@
 @php
     use Illuminate\Support\Facades\Route;
-    $noteTags = collect($metrics->tags ?? []);
+    $noteTags = collect($noteTags ?? []);
     $keyword = $keyword ?? request('keyword');
+    $defaultView = auth()->user()?->preference('default_view', 'grid');
 @endphp
 
 @extends('layouts.app')
@@ -26,7 +27,7 @@
     </section>
 
     <section class="toolbar">
-        <form class="search" method="GET" action="{{ Route::has('notes') ? route('notes') : '#' }}">
+        <form class="search" method="GET" action="{{ Route::has('notes.index') ? route('notes.index') : '#' }}">
             <i class="bi bi-search"></i>
             <input data-note-search name="keyword" value="{{ $keyword }}" type="search"
                    placeholder="Search title or content..." autocomplete="off">
@@ -37,13 +38,13 @@
                 <option value="{{ $tag->id }}">{{ $tag->name }}</option>
             @endforeach
         </select>
-        <button class="icon-btn active" type="button" data-view="grid" aria-label="Grid view"><i
+        <button class="icon-btn {{ $defaultView === 'grid' ? 'active' : '' }}" type="button" data-view="grid" aria-label="Grid view"><i
                 class="bi bi-grid-3x3-gap"></i></button>
-        <button class="icon-btn" type="button" data-view="list" aria-label="List view"><i class="bi bi-list-ul"></i>
+        <button class="icon-btn {{ $defaultView === 'list' ? 'active' : '' }}" type="button" data-view="list" aria-label="List view"><i class="bi bi-list-ul"></i>
         </button>
     </section>
 
-    <section class="notes-grid" data-notes-grid>
+    <section class="notes-grid {{ $defaultView === 'list' ? 'list-view' : '' }}" data-notes-grid>
         @forelse ($notes as $note)
 
             @include('notes.partials.note-card', [

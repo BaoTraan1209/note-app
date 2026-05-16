@@ -1,6 +1,8 @@
 @php
     $user = auth()->user();
-    $initials = strtoupper(substr($user->name ?? 'NA', 0, 2));
+    $initials = $user?->initials() ?? 'NA';
+    $themeClass = $user?->preference('theme') === 'dark' ? 'dark-theme' : '';
+    $avatarUrl = $user?->avatar ? asset('storage/'.$user->avatar) : null;
 @endphp
 
     <!doctype html>
@@ -9,17 +11,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ $user?->getKey() }}">
     <title>@yield('title', config('app.name', 'NoteNest'))</title>
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])</head>
-<body>
+<body class="{{ $themeClass }}">
 <div class="app-shell">
     <aside class="sidebar">
-        <div class="brand">
+        <a class="brand brand-link" href="{{ Route::has('dashboard') ? route('dashboard') : url('/') }}" aria-label="Go to dashboard">
             <span class="brand-mark"><i class="bi bi-journal-richtext"></i></span>
             <span>NoteNest</span>
-        </div>
+        </a>
 
         <a class="btn-primary create-btn" href="{{ Route::has('notes.create') ? route('notes.create') : '#' }}">
             <i class="bi bi-plus-lg"></i> New note
@@ -29,7 +33,6 @@
             <div class="nav-title">Workspace</div>
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ Route::has('dashboard') ? route('dashboard') : '#' }}"><span><i class="bi bi-grid"></i> Dashboard</span></a>
             <a class="nav-link {{ request()->routeIs('notes.*') ? 'active' : '' }}" href="{{ Route::has('notes.index') ? route('notes.index') : '#' }}"><span><i class="bi bi-journal-text"></i> Notes</span></a>
-            <a class="nav-link {{ request()->routeIs('labels.*') ? 'active' : '' }}" href="{{ Route::has('labels.index') ? route('labels.index') : '#' }}"><span><i class="bi bi-tags"></i> Labels</span></a>
             <a class="nav-link {{ request()->routeIs('shared.*') ? 'active' : '' }}" href="{{ Route::has('shared.index') ? route('shared.index') : '#' }}"><span><i class="bi bi-people"></i> Shared</span></a>
         </nav>
 
@@ -40,9 +43,15 @@
         </nav>
 
         <div class="sidebar-user">
-            <div class="avatar">{{ $initials }}</div>
+            <div class="avatar">
+                @if ($avatarUrl)
+                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }} avatar">
+                @else
+                    {{ $initials }}
+                @endif
+            </div>
             <div>
-                <strong>{{ $user->name ?? 'Guest User' }}</strong>
+                <strong>{{ $user->display_name ?: $user->name ?? 'Guest User' }}</strong>
                 <small>{{ $user->email ?? 'guest@example.com' }}</small>
             </div>
         </div>
@@ -56,14 +65,15 @@
                 <h1>@yield('page_title', 'Dashboard')</h1>
             </div>
             <div class="topbar-actions">
-                <form class="global-search" action="{{ Route::has('notes.index') ? route('notes.index') : '#' }}" method="GET">
-                    <i class="bi bi-search"></i>
-                    <input name="q" type="search" value="{{ request('q') }}" placeholder="Search notes...">
-                </form>
-
                 <div class="user-menu">
                     <button class="user-button" type="button" data-user-menu>
-                        <span class="avatar small">{{ $initials }}</span>
+                        <span class="avatar small">
+                            @if ($avatarUrl)
+                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }} avatar">
+                            @else
+                                {{ $initials }}
+                            @endif
+                        </span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="user-dropdown" data-user-dropdown>
@@ -84,6 +94,13 @@
             <div class="alert alert-success"><i class="bi bi-check-circle"></i><span>{{ session('status') }}</span></div>
         @endif
 
+        @if (! request()->routeIs('dashboard') && $user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+            <div class="notice notice-warning">
+                <i class="bi bi-envelope-exclamation"></i>
+                <span>Your account is not verified. Please check your email for the activation link.</span>
+            </div>
+        @endif
+
         @if ($errors->any())
             <div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i><span>{{ $errors->first() }}</span></div>
         @endif
@@ -97,10 +114,22 @@
 <nav class="mobile-nav">
     <a href="{{ Route::has('dashboard') ? route('dashboard') : '#' }}"><i class="bi bi-grid"></i><span>Home</span></a>
     <a href="{{ Route::has('notes.index') ? route('notes.index') : '#' }}"><i class="bi bi-journal-text"></i><span>Notes</span></a>
-    <a href="{{ Route::has('labels.index') ? route('labels.index') : '#' }}"><i class="bi bi-tags"></i><span>Labels</span></a>
     <a href="{{ Route::has('profile.edit') ? route('profile.edit') : '#' }}"><i class="bi bi-person"></i><span>Account</span></a>
 </nav>
 
-{{--<script src="{{ asset('resources/js/pages/app.js') }}"></script>--}}
+<div class="confirm-modal" data-confirm-modal aria-hidden="true">
+    <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-icon"><i class="bi bi-exclamation-triangle"></i></div>
+        <div>
+            <h2 id="confirm-title">Are you sure?</h2>
+            <p data-confirm-message>This action needs your confirmation.</p>
+        </div>
+        <div class="confirm-actions">
+            <button class="btn-secondary" type="button" data-confirm-cancel>Cancel</button>
+            <button class="btn-danger" type="button" data-confirm-accept>Yes, delete</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

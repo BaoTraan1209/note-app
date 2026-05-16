@@ -15,7 +15,7 @@
         </div>
         <div class="notice notice-warning">
             <i class="bi bi-wifi-off"></i>
-            <span>This page is a placeholder for PWA offline support and service worker fallback.</span>
+            <span>Your edits are stored locally and will be synchronized when the connection returns.</span>
         </div>
         <a class="btn-primary" href="{{ Route::has('dashboard') ? route('dashboard') : '#' }}" style="margin-top: 18px;"><i class="bi bi-arrow-left"></i> Back to dashboard</a>
     </section>

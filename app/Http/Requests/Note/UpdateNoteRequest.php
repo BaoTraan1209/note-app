@@ -25,7 +25,13 @@ class UpdateNoteRequest extends FormRequest
         return [
             'title' => 'required|string',
             'content' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:4096',
             'password' => 'nullable|string',
+            'is_pinned' => 'nullable|boolean',
+            'font_size' => 'nullable|integer|min:14|max:28',
+            'share_emails' => 'nullable|string',
+            'share_permission' => 'nullable|in:read,edit',
 
             'tags' => 'nullable|array',
             'tags.*' => 'nullable|string',
