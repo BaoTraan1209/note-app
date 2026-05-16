@@ -306,21 +306,3 @@ Sample account does not exist:
 
     php artisan db:seed
 
-
-12. SUBMISSION NOTES
---------------------
-Required submission should include:
-- Source code folder
-- Database file or migration instructions
-- Rubrik.docx
-- Demo video or YouTube demo link
-- Readme.txt
-
-Recommended final folder name:
-
-    id1_fullname1_id2_fullname2
-
-Recommended zip name:
-
-    id1_fullname1_id2_fullname2.zip
-
