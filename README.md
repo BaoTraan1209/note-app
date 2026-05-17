@@ -3,6 +3,10 @@ NOTE APP 2026 - FINAL PROJECT README
 524H0076 - Hoang Thai An
 
 524H0036 - Le Ngoc Bao Tran
+
+Link source code (github): https://github.com/BaoTraan1209/note-app-2026.git
+Link demo (google drive): https://drive.google.com/file/d/1J5nCE-oz5m46Dq1s3JXfUt-ecBZE5FUN/view?usp=sharing
+
 1. PROJECT OVERVIEW
 -------------------
 Project name: NoteNest / Note App 2026
