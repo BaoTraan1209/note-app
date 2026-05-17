@@ -1265,8 +1265,6 @@ document.querySelectorAll("[data-editor-command]").forEach((button) => {
 ========================================================= */
 
 async function syncPendingSaves() {
-    if (!navigator.onLine) return;
-
     let records = [];
 
     try {
@@ -1287,6 +1285,12 @@ async function syncPendingSaves() {
 
             await deleteFromStore("pendingSaves", record.key);
             await deleteFromStore("drafts", record.key);
+
+            if (record.key === noteStorageKey()) {
+                lastSavedHash = buildPayloadHash();
+                firstDirtyAt = null;
+                autosavePending = false;
+            }
         } catch {
             updateSaveState("Sync queued", "offline");
             return;
@@ -1404,6 +1408,22 @@ async function subscribeToRealtimeNote() {
 syncPendingSaves();
 subscribeToRealtimeNote();
 
+let syncRetryTimer = null;
+
+function queueOfflineSync(delay = 0) {
+    if (!noteForm || syncRetryTimer) return;
+
+    syncRetryTimer = window.setTimeout(async () => {
+        syncRetryTimer = null;
+        updateSaveState("Syncing...");
+        await syncPendingSaves();
+
+        if (buildPayloadHash() !== lastSavedHash) {
+            debounceAutosave(AUTOSAVE_FAST_DELAY);
+        }
+    }, delay);
+}
+
 /* =========================================================
    FORM SUBMIT
 ========================================================= */
@@ -1427,12 +1447,7 @@ document.querySelectorAll("[data-autosave-field]").forEach((field) => {
 });
 
 window.addEventListener("online", async () => {
-    updateSaveState("Syncing...");
-    await syncPendingSaves();
-
-    if (buildPayloadHash() !== lastSavedHash) {
-        debounceAutosave(AUTOSAVE_FAST_DELAY);
-    }
+    queueOfflineSync();
 });
 
 window.addEventListener("offline", () => {
@@ -1445,8 +1460,12 @@ document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
         window.clearTimeout(autosaveTimer);
         saveCurrentNoteNow();
+    } else {
+        queueOfflineSync(200);
     }
 });
+
+window.addEventListener("focus", () => queueOfflineSync(200));
 
 if (noteForm && autosaveUrl) {
     lastSavedHash = buildPayloadHash();

@@ -1,4 +1,4 @@
-const CACHE_NAME = "notenest-pwa-v1";
+const CACHE_NAME = "notenest-pwa-v2";
 const APP_SHELL = [
     "/login",
     "/offline",
@@ -56,6 +56,10 @@ self.addEventListener("fetch", (event) => {
 
     event.respondWith(
         caches.match(request).then((cached) => {
+            if (cached) {
+                return cached;
+            }
+
             const network = fetch(request)
                 .then((response) => {
                     if (response.ok) {
@@ -64,10 +68,9 @@ self.addEventListener("fetch", (event) => {
                     }
 
                     return response;
-                })
-                .catch(() => cached);
+                });
 
-            return cached || network;
+            return network;
         })
     );
 });
