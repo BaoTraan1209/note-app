@@ -152,15 +152,11 @@ Existing accounts currently available in the provided local database:
     1. Email: lengocbaotran2006123@gmail.com
        Password: Tran@1209
 
-    2. Email: tranchaugaming0166@gmail.com
-       Password: 120906tran
+    2. Email: hoangthaian.7942@gmail.com
+       Password: thaian252506
 
-    3. Email: hoaiannguyen673@gmail.com
-       Account name: Bao Traan
-       Password: Tran@1209
-
-    4. Email: bechowdethuong1@gmail.com
-       Password: Tran@1209
+    3. Email: thaian5553979@gmail.com
+        Password: 123456an
 
 Important password note:
 The application stores passwords as bcrypt hashes, so the original plain-text passwords cannot be
