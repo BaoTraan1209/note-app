@@ -461,6 +461,12 @@ let lastAutosaveStartedAt = 0;
 let lastSavedHash = "";
 let applyingRemoteUpdate = false;
 let realtimeSocketId = "";
+let realtimeSocket = null;
+let realtimeChannelName = "";
+let realtimeSubscribed = false;
+let realtimeDraftTimer = null;
+let realtimeDraftSeq = 0;
+let lastRemoteDraftAt = 0;
 let savedEditorRange = null;
 let nextPendingImageId = 1;
 let pendingImageFiles = [];
@@ -471,6 +477,7 @@ const AUTOSAVE_FAST_DELAY = 0;
 const AUTOSAVE_MAX_WAIT = 120;
 const AUTOSAVE_MIN_INTERVAL = 0;
 const AUTOSAVE_TIMEOUT = 12000;
+const REALTIME_DRAFT_DELAY = 40;
 const NOTE_DB_NAME = "notenest-offline";
 const NOTE_DB_VERSION = 1;
 
@@ -882,6 +889,7 @@ function markEditorDirty() {
 
     autosavePending = true;
     updateSaveState(navigator.onLine ? "Saving..." : "Offline - queued", navigator.onLine ? "" : "offline");
+    sendRealtimeDraft();
     debounceAutosave();
 }
 
@@ -1338,7 +1346,42 @@ function applyRemoteNote(note) {
     window.setTimeout(() => {
         updateSaveState("Saved");
         applyingRemoteUpdate = false;
-    }, 1200);
+    }, 120);
+}
+
+function sendRealtimeDraft() {
+    if (
+        !autosaveUrl ||
+        !navigator.onLine ||
+        !realtimeSubscribed ||
+        !realtimeSocket ||
+        realtimeSocket.readyState !== WebSocket.OPEN
+    ) {
+        return;
+    }
+
+    window.clearTimeout(realtimeDraftTimer);
+    realtimeDraftTimer = window.setTimeout(() => {
+        const currentUserId = Number(document.querySelector("meta[name='user-id']")?.content || 0);
+        const payload = buildAutosavePayload();
+
+        realtimeSocket.send(JSON.stringify({
+            event: "client-note.draft",
+            channel: realtimeChannelName,
+            data: JSON.stringify({
+                editor_id: currentUserId,
+                seq: ++realtimeDraftSeq,
+                note: {
+                    id: Number(noteId || 0),
+                    title: payload.title,
+                    content: payload.content,
+                    font_size: Number(payload.font_size || 16),
+                    is_pinned: payload.is_pinned === "1",
+                    tags: payload.tags || [],
+                },
+            }),
+        }));
+    }, REALTIME_DRAFT_DELAY);
 }
 
 async function subscribeToRealtimeNote() {
@@ -1354,6 +1397,8 @@ async function subscribeToRealtimeNote() {
     const port = import.meta.env.VITE_REVERB_PORT || import.meta.env.VITE_PUSHER_PORT || "8080";
     const wsUrl = `${scheme}://${host}:${port}/app/${key}?protocol=7&client=notenest&version=1.0&flash=false`;
     const socket = new WebSocket(wsUrl);
+    realtimeSocket = socket;
+    realtimeChannelName = channelName;
 
     socket.addEventListener("message", async (event) => {
         const message = JSON.parse(event.data || "{}");
@@ -1390,7 +1435,13 @@ async function subscribeToRealtimeNote() {
             return;
         }
 
-        if (message.event !== "note.updated") return;
+        if (message.event === "pusher_internal:subscription_succeeded") {
+            realtimeSubscribed = true;
+            updateSaveState("Realtime connected", "live");
+            return;
+        }
+
+        if (!["note.updated", "client-note.draft"].includes(message.event)) return;
 
         const data = typeof message.data === "string"
             ? JSON.parse(message.data)
@@ -1398,6 +1449,14 @@ async function subscribeToRealtimeNote() {
         const currentUserId = Number(document.querySelector("meta[name='user-id']")?.content || 0);
 
         if (Number(data.editor_id) === currentUserId) return;
+
+        if (message.event === "client-note.draft") {
+            lastRemoteDraftAt = Date.now();
+            applyRemoteNote(data.note);
+            return;
+        }
+
+        if (Date.now() - lastRemoteDraftAt < 400) return;
 
         applyRemoteNote(data.note);
     });
@@ -1429,6 +1488,8 @@ function queueOfflineSync(delay = 0) {
 ========================================================= */
 
 noteForm?.addEventListener("submit", (event) => {
+    if (!autosaveUrl) return;
+
     event.preventDefault();
     syncRichContent();
     window.clearTimeout(autosaveTimer);
@@ -1451,12 +1512,14 @@ window.addEventListener("online", async () => {
 });
 
 window.addEventListener("offline", () => {
-    if (noteForm && buildPayloadHash() !== lastSavedHash) {
+    if (noteForm && autosaveUrl && buildPayloadHash() !== lastSavedHash) {
         updateSaveState("Offline - queued", "offline");
     }
 });
 
 document.addEventListener("visibilitychange", () => {
+    if (!autosaveUrl) return;
+
     if (document.visibilityState === "hidden") {
         window.clearTimeout(autosaveTimer);
         saveCurrentNoteNow();

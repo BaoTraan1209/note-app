@@ -69,9 +69,9 @@ class NotePasswordController extends Controller
             'password' => $validated['password'],
         ])->save();
 
-        session()->put($this->sessionKey($note), true);
+        session()->forget($this->sessionKey($note));
 
-        return redirect()->route('notes.show', $note->id)->with('status', 'Note password saved.');
+        return redirect()->route('notes.index')->with('status', 'Note password saved. Open the note again to unlock it.');
     }
 
     public function destroy(Request $request, int $noteId): RedirectResponse

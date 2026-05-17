@@ -27,6 +27,7 @@ class NoteController extends Controller
     public function index(Request $request): View
     {
         $user = AuthHelper::getUser();
+        $this->forgetUnlockedNotes();
 
         $page = (int) $request->get('page', 1);
         $perPage = (int) $request->get('perPage', 1000);
@@ -282,6 +283,16 @@ class NoteController extends Controller
         return "notes.{$note->id}.unlocked";
     }
 
+    protected function forgetUnlockedNotes(): void
+    {
+        collect(session()->all())
+            ->keys()
+            ->filter(fn ($key) => is_string($key)
+                && str_starts_with($key, 'notes.')
+                && str_ends_with($key, '.unlocked'))
+            ->each(fn ($key) => session()->forget($key));
+    }
+
     protected function appendImages(Request $request, Note $note): Collection
     {
         if (! $request->hasFile('images')) {
@@ -337,6 +348,7 @@ class NoteController extends Controller
     public function shared(): View
     {
         $user = AuthHelper::getUser();
+        $this->forgetUnlockedNotes();
 
         $notes = Note::query()
             ->whereHas('shareUsers', fn ($share) => $share->where('users.id', $user->getKey()))

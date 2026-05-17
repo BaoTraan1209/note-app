@@ -31,7 +31,10 @@
           method="POST"
           enctype="multipart/form-data"
           action="{{ $updateUrl }}"
-          @if($canEdit) data-note-form data-note-id="{{ $note->id }}" data-autosave-url="{{ $updateUrl }}" data-autosave-mode="edit" data-realtime-channel="private-notes.{{ $note->id }}" @endif>
+          data-note-form
+          data-note-id="{{ $note->id }}"
+          data-realtime-channel="private-notes.{{ $note->id }}"
+          @if($canEdit) data-autosave-url="{{ $updateUrl }}" data-autosave-mode="edit" @endif>
         @csrf
         @method('PUT')
 
