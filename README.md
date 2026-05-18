@@ -6,7 +6,7 @@ NOTE APP 2026 - FINAL PROJECT README
 
 Link source code (github): https://github.com/BaoTraan1209/note-app-2026.git
 
-Link demo (google drive): https://drive.google.com/file/d/1J5nCE-oz5m46Dq1s3JXfUt-ecBZE5FUN/view?usp=sharing
+Link demo (google drive): https://drive.google.com/file/d/1bs3wa9jNC1GR18Hm2ZnW2nQDGDUZPHdC/view?usp=sharing
 
 1. PROJECT OVERVIEW
 -------------------
